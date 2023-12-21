@@ -1,0 +1,70 @@
+#import json, requests, and pandas
+import json
+import requests
+import pandas as pd
+
+
+# input ORCID ID for Jack Brookshire
+orcid = 'https://orcid.org/0000-0002-0412-7696'
+
+#build API URL for one author works
+def build_author_works_url(orcid):
+    # specify endpoint
+    endpoint = 'works'
+
+    # build the 'filter' parameter
+    filters = (
+      f'author.orcid:{orcid}',
+      'is_paratext:false'
+    )
+
+    # put the URL together
+    return f'https://api.openalex.org/{endpoint}?filter={",".join(filters)}'
+
+author_works_url = build_author_works_url(orcid)
+
+#get JSON data from API URL and put it in the variable "response_data"
+r = requests.get(author_works_url)
+response_data = r.json()
+
+#print response_data variable to check
+#print(response_data)
+
+#print type to find data structure 
+#print (type(response_data['results']))
+
+#filter display_name data from concepts dictionary contained in response_data results dictionary and put it in the variable "concepts"
+index = 0
+concepts_list = []
+
+while index <=5:
+    
+    concepts = [result['concepts'][index]['display_name'] for result in response_data['results']]
+
+    concepts_list.append(concepts)
+    index += 1
+
+#new variable to store joined list of lists
+resultList = []
+
+# join list of lists
+for m in range(len(concepts_list)):
+
+   # using nested for loop, traversing the inner lists
+   for n in range (len(concepts_list[m])):
+
+      # Add each element to the result list
+      resultList.append(concepts_list[m][n])
+       
+# count concepts
+concepts = pd.DataFrame(resultList)
+#print(concepts)
+
+concept_counts = concepts.value_counts()[:5]
+print(concept_counts)
+
+concept = concept_counts.index
+
+concept_res = [' '.join(tups) for tups in concept]
+
+concept_res
