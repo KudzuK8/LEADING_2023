@@ -1,0 +1,22 @@
+import json
+import csv
+import pyalex
+from pyalex import Works, Authors, Sources, Institutions, Concepts, Publishers
+import pandas as pd
+
+#polite pool
+pyalex.config.email = "nkoontz@uwyo.edu"
+
+#input ORCID ID for Jack Brookshire
+#orcid = 'https://orcid.org/0000-0002-0412-7696'
+
+journals_related = pd.DataFrame()
+
+for year in range(2020, 2025):
+    for page in range(1, 10):
+        journals_related1 = Works().filter(authorships = {"institutions": {"ror":"02w0trx84"}}, publication_year = year).filter(author={"orcid": "0000-0002-0412-7696"}).select("related_works").get(per_page=200, page=page)
+        journals_related1 = pd.DataFrame(journals_related1)
+        journals_related= pd.concat([journals_related, journals_related1])
+
+journals_related = journals_related.reset_index()
+journals_related
