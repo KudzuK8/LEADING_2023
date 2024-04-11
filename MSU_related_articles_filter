@@ -51,7 +51,7 @@ while i < s:
     x = requests.get(article_url[i])
     article_data = x.json()
     article_year = article_data.get('publication_year')
-    if article_year > 2007:
+    if article_year > 2020:
         result_filtered = output_results.append(article_data)
     else:
         pass
