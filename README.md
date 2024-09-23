@@ -9,18 +9,18 @@ import numpy as np
 # input ORCID ID for Jack Brookshire
 orcid = 'https://orcid.org/0000-0002-0412-7696'
 
-# build API URL for one author works
+#build API URL for one author works
 def build_author_works_url(orcid):
     # specify endpoint
     endpoint = 'works'
 
-# build the 'filter' parameter
+    # build the 'filter' parameter
     filters = (
       f'author.orcid:{orcid}',
       'is_paratext:false'
     )
 
-# put the URL together
+    # put the URL together
     return f'https://api.openalex.org/{endpoint}?filter={",".join(filters)}'
 
 author_works_url = build_author_works_url(orcid)
@@ -33,8 +33,31 @@ related_results = [result['related_works'] for result in response_data['results'
 
 related_strip_to_W = np.char.strip(related_results, chars ='https://openalex.org/')
 
-related_flat = related_strip_to_W.flat
-related_flat.copy()
+#for x in related_strip_to_W:
+    #for y in x:
+       # print(y)
 
-for x in related_flat:
-    print(x)
+article_results = np.ravel(related_strip_to_W)
+
+article_results_list = article_results.tolist()
+
+#article_url = "https://api.openalex.org/works/"
+
+for x in article_results_list:
+    article_url = [f'https://api.openalex.org/works/' + x for x in article_results_list]
+
+i = 0
+s = len(article_url)
+output_results = []
+while i < s:
+    x = requests.get(article_url[i])
+    article_data = x.json()
+    article_year = article_data.get('publication_year')
+    if article_year > 2020:
+        result_filtered = output_results.append(article_data)
+    else:
+        pass
+    i = i+1
+
+output_results
+
